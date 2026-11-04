@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800;
+  }
+}
+
+/* Clases utilitarias personalizadas */
+.text-balance {
+  text-wrap: balance;
+}
+
+.bg-pattern {
+  background-image: radial-gradient(rgba(14, 143, 217, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+

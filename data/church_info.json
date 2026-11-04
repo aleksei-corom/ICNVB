@@ -1,0 +1,71 @@
+{
+  "name": "Iglesia Cristiana Nueva Vida",
+  "short_name": "ICNVB",
+  "slogan": "Un lugar para creer, pertenecer y crecer en Cristo",
+  "address": "Corregimiento Bremen",
+  "city": "Sincelejo",
+  "state": "Sucre",
+  "country": "Colombia",
+  "pastors": [
+    "Pastor Benjamín Ramos",
+    "Pastora Martha Escudero"
+  ],
+  "phones": [
+    "+57 311 327 4403",
+    "+57 313 509 4547"
+  ],
+  "whatsapp_numbers": [
+    "573113274403",
+    "573135094547"
+  ],
+  "regular_schedule": [
+    {
+      "day": "Domingos",
+      "time": "9:00 AM - 11:30 AM",
+      "title": "Culto General & Escuela Dominical",
+      "category": "Culto General",
+      "description": "Tiempo de alabanza, adoración congregacional, predicación de la Palabra de Dios y clases formativas para niños de todas las edades.",
+      "icon": "Sun"
+    },
+    {
+      "day": "Miércoles",
+      "time": "7:00 PM - 9:00 PM",
+      "title": "Culto de Oración y Doctrina Bíblica",
+      "category": "Enseñanza",
+      "description": "Encuentro de fortalecimiento espiritual, estudio bíblico profundo y clamor unido por la comunidad y las familias.",
+      "icon": "BookOpen"
+    },
+    {
+      "day": "Jueves (Mañana)",
+      "time": "9:00 AM - 12:00 M",
+      "title": "Ayuno Congregacional de Intercesión",
+      "category": "Ayuno",
+      "description": "Búsqueda del rostro de Dios en humillación, intercesión por los enfermos, quebrantamiento y renovación espiritual.",
+      "icon": "HeartHandshake"
+    },
+    {
+      "day": "Jueves (Noche)",
+      "time": "7:00 PM - 9:00 PM",
+      "title": "Culto de Damas (Mujeres de Fe)",
+      "category": "Damas",
+      "description": "Reunión edificante para mujeres, madres e hijas, cultivando el testimonio cristiano, la hermandad y el poder de la oración.",
+      "icon": "Sparkles"
+    },
+    {
+      "day": "Viernes",
+      "time": "7:00 PM - 9:00 PM",
+      "title": "Culto de Jóvenes y Jovencitos",
+      "category": "Jóvenes",
+      "description": "Espacio dinámico para la juventud con música, desafíos bíblicos, dinámicas e inspiración para vivir con propósito en Cristo.",
+      "icon": "Flame"
+    },
+    {
+      "day": "Mensual",
+      "time": "Programación Mensual",
+      "title": "Gran Vigilia de Poder & Avivamiento",
+      "category": "Vigilia",
+      "description": "Noches especiales de búsqueda continua, vigilias de oración y adoración extendida anunciadas mes a mes en nuestro calendario.",
+      "icon": "Moon"
+    }
+  ]
+}

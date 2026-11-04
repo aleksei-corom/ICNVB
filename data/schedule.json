@@ -1,0 +1,123 @@
+[
+  {
+    "id": "evt-nov-01",
+    "title": "Culto de Celebración y Santa Cena",
+    "date": "2026-11-01",
+    "time": "9:00 AM - 11:30 AM",
+    "category": "Culto General",
+    "description": "Primer domingo del mes: Conmemoramos el sacrificio de Cristo en la cruz con la Santa Cena y acción de gracias comunitaria.",
+    "scripture": "1 Corintios 11:24-26",
+    "is_featured": true,
+    "location": "Templo Central ICNVB - Bremen"
+  },
+  {
+    "id": "evt-nov-04",
+    "title": "Estudio Bíblico: Fundamentos de la Fe",
+    "date": "2026-11-04",
+    "time": "7:00 PM - 9:00 PM",
+    "category": "Enseñanza",
+    "description": "Serie doctrinal para profundizar en las promesas y mandamientos de Dios para la familia cristiana.",
+    "scripture": "2 Timoteo 3:16-17",
+    "is_featured": false,
+    "location": "Templo Central ICNVB - Bremen"
+  },
+  {
+    "id": "evt-nov-05-am",
+    "title": "Mañana de Ayuno e Intercesión por las Familias",
+    "date": "2026-11-05",
+    "time": "9:00 AM - 12:00 M",
+    "category": "Ayuno",
+    "description": "Clamor por sanidad de los enfermos, restauración de hogares y cobertura espiritual sobre el corregimiento de Bremen.",
+    "scripture": "Esdras 8:23",
+    "is_featured": false,
+    "location": "Templo Central ICNVB - Bremen"
+  },
+  {
+    "id": "evt-nov-05-pm",
+    "title": "Reunión de Damas: Valientes y Esforzadas",
+    "date": "2026-11-05",
+    "time": "7:00 PM - 9:00 PM",
+    "category": "Damas",
+    "description": "Culto especial para mujeres con alabanza y una palabra de fe y ánimo a cargo de la Pastora Martha Escudero.",
+    "scripture": "Proverbios 31:25-30",
+    "is_featured": true,
+    "location": "Templo Central ICNVB - Bremen"
+  },
+  {
+    "id": "evt-nov-06",
+    "title": "Encuentro de Jóvenes y Jovencitos: Generación Sin Límites",
+    "date": "2026-11-06",
+    "time": "7:00 PM - 9:00 PM",
+    "category": "Jóvenes",
+    "description": "Alabanza contemporánea, testimonios y mensaje desafiante para la juventud. ¡No te quedes en casa!",
+    "scripture": "1 Timoteo 4:12",
+    "is_featured": true,
+    "location": "Templo Central ICNVB - Bremen"
+  },
+  {
+    "id": "evt-nov-08",
+    "title": "Culto Dominical de Familia y Amigos",
+    "date": "2026-11-08",
+    "time": "9:00 AM - 11:30 AM",
+    "category": "Culto General",
+    "description": "Trae a tu familia y vecinos a escuchar un mensaje de esperanza y vida eterna.",
+    "scripture": "Josué 24:15",
+    "is_featured": false,
+    "location": "Templo Central ICNVB - Bremen"
+  },
+  {
+    "id": "evt-nov-12-am",
+    "title": "Ayuno Congregacional de Sanidad",
+    "date": "2026-11-12",
+    "time": "9:00 AM - 12:00 M",
+    "category": "Ayuno",
+    "description": "Oración unida creyendo en el poder de Dios para sanar cuerpos y sanar almas.",
+    "scripture": "Santiago 5:14-15",
+    "is_featured": false,
+    "location": "Templo Central ICNVB - Bremen"
+  },
+  {
+    "id": "evt-nov-12-pm",
+    "title": "Culto de Damas: Edificando el Hogar",
+    "date": "2026-11-12",
+    "time": "7:00 PM - 9:00 PM",
+    "category": "Damas",
+    "description": "Estudio práctico para damas sobre sabiduría bíblica en el hogar.",
+    "scripture": "Proverbios 14:1",
+    "is_featured": false,
+    "location": "Templo Central ICNVB - Bremen"
+  },
+  {
+    "id": "evt-nov-13",
+    "title": "Noche de Jóvenes: Pasión por Su Presencia",
+    "date": "2026-11-13",
+    "time": "7:00 PM - 9:00 PM",
+    "category": "Jóvenes",
+    "description": "Tiempo especial de adoración íntima y reconciliación espiritual para jóvenes y adolescentes.",
+    "scripture": "Salmos 119:9",
+    "is_featured": false,
+    "location": "Templo Central ICNVB - Bremen"
+  },
+  {
+    "id": "evt-nov-20",
+    "title": "Gran Vigilia Mensual Unida: Clamor por Sucre y Bremen",
+    "date": "2026-11-20",
+    "time": "8:00 PM - 1:00 AM",
+    "category": "Vigilia",
+    "description": "Noche extraordinaria de oración, intercesión continua, predicación y búsqueda intensa del Espíritu Santo.",
+    "scripture": "Lucas 6:12; Jeremías 33:3",
+    "is_featured": true,
+    "location": "Templo Central ICNVB - Bremen"
+  },
+  {
+    "id": "evt-nov-29",
+    "title": "Culto Especial de Acción de Gracias & Cierre de Mes",
+    "date": "2026-11-29",
+    "time": "9:00 AM - 11:30 AM",
+    "category": "Culto General",
+    "description": "Damos gracias a Dios por sus maravillas durante todo el mes con testimonios y alabanza con toda la congregación.",
+    "scripture": "Salmos 100:1-5",
+    "is_featured": true,
+    "location": "Templo Central ICNVB - Bremen"
+  }
+]
