@@ -18,7 +18,7 @@ pub struct ScheduleFilter {
 
 // GET /api/info
 pub async fn get_church_info(State(state): State<AppState>) -> Json<ApiResponse<ChurchInfo>> {
-    let info = state.church_info.read().unwrap().clone();
+    let info = state.church_info.read().await.clone();
     Json(ApiResponse {
         success: true,
         message: "Información de la iglesia obtenida exitosamente".to_string(),
@@ -31,7 +31,7 @@ pub async fn get_schedule(
     Query(filter): Query<ScheduleFilter>,
     State(state): State<AppState>,
 ) -> Json<ApiResponse<Vec<MonthlyEvent>>> {
-    let events = state.events.read().unwrap();
+    let events = state.events.read().await;
     let mut filtered: Vec<MonthlyEvent> = events.clone();
 
     if let Some(month_prefix) = &filter.month {
@@ -60,48 +60,47 @@ pub async fn get_schedule(
 pub async fn add_monthly_event(
     State(state): State<AppState>,
     Json(mut new_event): Json<MonthlyEvent>,
-) -> (StatusCode, Json<ApiResponse<MonthlyEvent>>) {
+) -> Result<(StatusCode, Json<ApiResponse<MonthlyEvent>>), StatusCode> {
     if new_event.id.is_empty() {
         new_event.id = format!("evt-{}", Uuid::new_v4().simple());
     }
 
     {
-        let mut events = state.events.write().unwrap();
+        let mut events = state.events.write().await;
         events.push(new_event.clone());
     }
 
-    let _ = state.save_events();
+    state
+        .save_events()
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-    (
+    Ok((
         StatusCode::CREATED,
         Json(ApiResponse {
             success: true,
             message: "Evento agregado exitosamente a la programación".to_string(),
             data: Some(new_event),
         }),
-    )
+    ))
 }
 
 // POST /api/prayer-request
 pub async fn create_prayer_request(
     State(state): State<AppState>,
     Json(payload): Json<CreatePrayerInput>,
-) -> (StatusCode, Json<ApiResponse<PrayerRequest>>) {
+) -> Result<(StatusCode, Json<ApiResponse<PrayerRequest>>), StatusCode> {
     if payload.name.trim().is_empty() || payload.message.trim().is_empty() {
-        return (
-            StatusCode::BAD_REQUEST,
-            Json(ApiResponse {
-                success: false,
-                message: "El nombre y el motivo de oración son requeridos".to_string(),
-                data: None,
-            }),
-        );
+        return Err(StatusCode::BAD_REQUEST);
     }
 
     let prayer = PrayerRequest {
         id: format!("pry-{}", Uuid::new_v4().simple()),
         name: payload.name.trim().to_string(),
-        phone: payload.phone.map(|p| p.trim().to_string()).filter(|p| !p.is_empty()),
+        phone: payload
+            .phone
+            .map(|p| p.trim().to_string())
+            .filter(|p| !p.is_empty()),
         category: payload.category.trim().to_string(),
         message: payload.message.trim().to_string(),
         created_at: Utc::now().format("%Y-%m-%d %H:%M").to_string(),
@@ -109,31 +108,33 @@ pub async fn create_prayer_request(
     };
 
     {
-        let mut prayers = state.prayers.write().unwrap();
+        let mut prayers = state.prayers.write().await;
         prayers.push(prayer.clone());
     }
 
-    let _ = state.save_prayers();
+    state
+        .save_prayers()
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-    (
+    Ok((
         StatusCode::CREATED,
         Json(ApiResponse {
             success: true,
             message: "Tu petición de oración ha sido recibida. Los pastores y el equipo de intercesión estarán orando por ti.".to_string(),
             data: Some(prayer),
         }),
-    )
+    ))
 }
 
 // GET /api/prayer-requests (Peticiones públicas o testimonios)
-pub async fn get_prayer_requests(State(state): State<AppState>) -> Json<ApiResponse<Vec<PrayerRequest>>> {
-    let prayers = state.prayers.read().unwrap();
+pub async fn get_prayer_requests(
+    State(state): State<AppState>,
+) -> Json<ApiResponse<Vec<PrayerRequest>>> {
+    let prayers = state.prayers.read().await;
     // Excluir peticiones marcadas como privadas
-    let public_prayers: Vec<PrayerRequest> = prayers
-        .iter()
-        .filter(|p| !p.is_private)
-        .cloned()
-        .collect();
+    let public_prayers: Vec<PrayerRequest> =
+        prayers.iter().filter(|p| !p.is_private).cloned().collect();
 
     Json(ApiResponse {
         success: true,
@@ -150,4 +151,3 @@ pub async fn health_check() -> Json<serde_json::Value> {
         "church": "Iglesia Cristiana Nueva Vida - Bremen, Sincelejo"
     }))
 }
-

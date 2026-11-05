@@ -1,8 +1,22 @@
 <script lang="ts">
   import { Menu, X, Phone, Calendar, HeartHandshake, MapPin } from 'lucide-svelte';
+  import { APP_CONFIG } from '../config';
 
   export let churchName = "Iglesia Cristiana Nueva Vida";
   export let location = "Bremen, Sincelejo";
+
+  const waBenjamin = APP_CONFIG.waLink(
+    APP_CONFIG.contact.whatsapp.benjamin,
+    "Hola%20Pastores,%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20Iglesia%20Cristiana%20Nueva%20Vida"
+  );
+  const waBenjaminVisit = APP_CONFIG.waLink(
+    APP_CONFIG.contact.whatsapp.benjamin,
+    "Hola%20Pastor%20Benjam%C3%ADn,%20le%20escribo%20desde%20la%20p%C3%A1gina%20web"
+  );
+  const waMarthaVisit = APP_CONFIG.waLink(
+    APP_CONFIG.contact.whatsapp.martha,
+    "Hola%20Pastora%20Martha,%20le%20escribo%20desde%20la%20p%C3%A1gina%20web"
+  );
 
   let isMenuOpen = false;
 
@@ -30,13 +44,13 @@
 
       <div class="flex items-center gap-3 text-xs">
         <a 
-          href="https://wa.me/573113274403?text=Hola%20Pastores,%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20Iglesia%20Cristiana%20Nueva%20Vida" 
+          href={waBenjamin} 
           target="_blank" 
           rel="noopener noreferrer"
           class="flex items-center gap-1 text-gold-300 hover:text-white transition-colors"
         >
           <Phone class="w-3 h-3" />
-          <span>Pastoral: 311 327 4403</span>
+          <span>Pastoral: {APP_CONFIG.contact.phone.benjamin}</span>
         </a>
       </div>
     </div>
@@ -174,7 +188,7 @@
 
       <div class="pt-3 border-t border-slate-100 flex flex-col gap-2">
         <a 
-          href="https://wa.me/573113274403?text=Hola%20Pastor%20Benjam%C3%ADn,%20le%20escribo%20desde%20la%20p%C3%A1gina%20web" 
+          href={waBenjaminVisit} 
           target="_blank"
           rel="noopener noreferrer"
           class="w-full text-center py-2.5 px-4 rounded-xl font-medium text-sm text-emerald-800 bg-emerald-50 border border-emerald-200"
@@ -182,7 +196,7 @@
           Escribir al Pastor Benjamín
         </a>
         <a 
-          href="https://wa.me/573135094547?text=Hola%20Pastora%20Martha,%20le%20escribo%20desde%20la%20p%C3%A1gina%20web" 
+          href={waMarthaVisit} 
           target="_blank"
           rel="noopener noreferrer"
           class="w-full text-center py-2.5 px-4 rounded-xl font-medium text-sm text-purple-800 bg-purple-50 border border-purple-200"

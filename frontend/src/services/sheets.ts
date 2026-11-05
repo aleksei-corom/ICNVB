@@ -106,7 +106,7 @@ export async function fetchEventsFromGoogleSheets(csvUrl: string): Promise<Month
       date,
       time: hora,
       category: categoria,
-      description,
+      description: descripcion,
       scripture: cita ? cita : undefined,
       is_featured: isFeatured,
       location: lugar,

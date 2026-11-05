@@ -1,5 +1,6 @@
 <script lang="ts">
   import { HeartHandshake, Send, CheckCircle2, MessageCircle, AlertCircle, Shield } from 'lucide-svelte';
+  import { APP_CONFIG } from '../config';
 
   let name = '';
   let phone = '';
@@ -9,6 +10,7 @@
 
   let isSubmitting = false;
   let submitted = false;
+  let submitError: string | null = null;
   let errorMessage = '';
 
   const categories = [
@@ -45,13 +47,12 @@
 
       if (res.ok) {
         submitted = true;
+        submitError = null;
       } else {
-        // En caso de que la API esté temporalmente offline en modo preview estático
-        submitted = true;
+        submitError = `El servidor respondió con error (${res.status}). Intenta nuevamente o escríbenos directamente por WhatsApp.`;
       }
     } catch {
-      // Manejo seguro offline/frontend
-      submitted = true;
+      submitError = 'No se pudo conectar con el servidor. Intenta nuevamente o escríbenos directamente por WhatsApp.';
     } finally {
       isSubmitting = false;
     }
@@ -73,7 +74,7 @@ ${phone ? `*Teléfono:* ${phone}\n` : ''}
 ${message}
 
 Pastores Benjamín y Martha, les pido su cobertura en oración. ¡Muchas gracias!`;
-    const url = `https://wa.me/573113274403?text=${encodeURIComponent(text)}`;
+    const url = APP_CONFIG.waLink(APP_CONFIG.contact.whatsapp.benjamin, encodeURIComponent(text));
     window.open(url, '_blank');
   }
 </script>
@@ -129,6 +130,30 @@ Pastores Benjamín y Martha, les pido su cobertura en oración. ¡Muchas gracias
               Enviar otra petición
             </button>
           </div>
+        </div>
+      {:else if submitError}
+        <div class="bg-red-500/20 border border-red-500/40 rounded-2xl p-6 text-center max-w-lg mx-auto backdrop-blur-md animate-in fade-in zoom-in duration-300">
+          <AlertCircle class="w-10 h-10 text-red-400 mx-auto mb-4" />
+          <h3 class="font-serif font-bold text-xl text-red-100 mb-2">
+            No se pudo enviar la petición
+          </h3>
+          <p class="text-slate-200 text-sm leading-relaxed mb-6">{submitError}</p>
+          <button
+            type="button"
+            on:click={() => {
+              submitError = null;
+            }}
+            class="px-5 py-2.5 bg-church-800 text-white rounded-xl text-xs font-semibold hover:bg-church-900 transition-colors"
+          >
+            Intentar de nuevo
+          </button>
+          <button
+            type="button"
+            on:click={sendDirectWhatsApp}
+            class="mt-3 px-5 py-2.5 border border-white/30 text-white rounded-xl text-xs font-semibold hover:bg-white/10 transition-colors"
+          >
+            Escribir por WhatsApp
+          </button>
         </div>
       {:else}
         <form on:submit|preventDefault={handleSubmit} class="max-w-xl mx-auto space-y-4">

@@ -2,9 +2,10 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use http::header::HeaderValue;
 use std::net::SocketAddr;
 use std::path::PathBuf;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::cors::{AllowOrigin, Any, CorsLayer};
 use tower_http::services::ServeDir;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -29,12 +30,32 @@ async fn main() {
         .init();
 
     let data_dir = std::env::var("DATA_DIR").unwrap_or_else(|_| "../data".to_string());
-    let state = AppState::new(&data_dir);
+    let state = match AppState::new(&data_dir).await {
+        Ok(state) => state,
+        Err(e) => {
+            tracing::error!("Error inicializando el estado de la aplicación: {}", e);
+            std::process::exit(1);
+        }
+    };
 
-    let cors = CorsLayer::new()
-        .allow_origin(Any)
-        .allow_methods(Any)
-        .allow_headers(Any);
+    let allowed_origins = std::env::var("ALLOWED_ORIGINS")
+        .unwrap_or_else(|_| "http://localhost:5173,http://localhost:3000".to_string());
+    let origins: Vec<HeaderValue> = allowed_origins
+        .split(',')
+        .filter_map(|s| s.trim().parse().ok())
+        .collect();
+
+    let cors = if origins.is_empty() {
+        CorsLayer::new()
+            .allow_origin(Any)
+            .allow_methods(Any)
+            .allow_headers(Any)
+    } else {
+        CorsLayer::new()
+            .allow_origin(AllowOrigin::list(origins))
+            .allow_methods(Any)
+            .allow_headers(Any)
+    };
 
     let api_routes = Router::new()
         .route("/health", get(health_check))
@@ -68,7 +89,10 @@ async fn main() {
         .unwrap_or(3000);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
-    tracing::info!("🕊️ Servidor Iglesia Cristiana Nueva Vida corriendo en http://{}", addr);
+    tracing::info!(
+        "🕊️ Servidor Iglesia Cristiana Nueva Vida corriendo en http://{}",
+        addr
+    );
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();

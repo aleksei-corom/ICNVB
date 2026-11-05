@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Heart, MapPin, Phone, MessageCircle, ArrowUp } from 'lucide-svelte';
+  import { APP_CONFIG } from '../config';
 
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -91,26 +92,26 @@
           <div class="bg-white/5 p-3 rounded-xl border border-white/10">
             <span class="text-slate-400 block text-[11px]">Pastor Benjamín Ramos</span>
             <a 
-              href="https://wa.me/573113274403" 
+              href={APP_CONFIG.waLink(APP_CONFIG.contact.whatsapp.benjamin)} 
               target="_blank" 
               rel="noopener noreferrer"
               class="font-semibold text-emerald-400 hover:underline flex items-center gap-1.5 mt-0.5"
             >
               <MessageCircle class="w-3.5 h-3.5" />
-              <span>+57 311 327 4403</span>
+              <span>{APP_CONFIG.contact.phone.benjamin}</span>
             </a>
           </div>
 
           <div class="bg-white/5 p-3 rounded-xl border border-white/10">
             <span class="text-slate-400 block text-[11px]">Pastora Martha Escudero</span>
             <a 
-              href="https://wa.me/573135094547" 
+              href={APP_CONFIG.waLink(APP_CONFIG.contact.whatsapp.martha)} 
               target="_blank" 
               rel="noopener noreferrer"
               class="font-semibold text-emerald-400 hover:underline flex items-center gap-1.5 mt-0.5"
             >
               <MessageCircle class="w-3.5 h-3.5" />
-              <span>+57 313 509 4547</span>
+              <span>{APP_CONFIG.contact.phone.martha}</span>
             </a>
           </div>
 
@@ -136,12 +137,15 @@
 
     <!-- Barra Inferior de Derechos -->
     <div class="pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-      <p>
+      <p class="text-center sm:text-left">
         © {new Date().getFullYear()} Iglesia Cristiana Nueva Vida • Bremen, Sincelejo, Sucre, Colombia.
       </p>
-      <p class="flex items-center gap-1">
+      <p class="text-center sm:text-left flex items-center gap-1 justify-center sm:justify-start">
         <span>Para la sola gloria de Dios</span>
         <Heart class="w-3 h-3 text-red-400 fill-red-400" />
+      </p>
+      <p class="text-center sm:text-left font-semibold text-gold-300">
+        Diseñado por: <span class="text-white">CORJAR Computers Solutions</span>
       </p>
     </div>
 

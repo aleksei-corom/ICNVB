@@ -1,5 +1,11 @@
 <script lang="ts">
   import { MapPin, Phone, MessageCircle, Navigation, HelpCircle, Check, Compass } from 'lucide-svelte';
+  import { APP_CONFIG } from '../config';
+
+  const waLocation = APP_CONFIG.waLink(
+    APP_CONFIG.contact.whatsapp.benjamin,
+    "Hola%20Pastor%20Benjam%C3%ADn,%20%C2%BFme%20podr%C3%ADa%20indicar%20la%20ubicaci%C3%B3n%20exacta%20en%20Bremen%20para%20visitarles?"
+  );
 
   const faqs = [
     {
@@ -76,7 +82,7 @@
           <!-- Botones de Acción Inmediata -->
           <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
             <a
-              href="https://wa.me/573113274403?text=Hola%20Pastor%20Benjam%C3%ADn,%20%C2%BFme%20podr%C3%ADa%20indicar%20la%20ubicaci%C3%B3n%20exacta%20en%20Bremen%20para%20visitarles?"
+              href={waLocation} 
               target="_blank"
               rel="noopener noreferrer"
               class="flex-1 inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors"

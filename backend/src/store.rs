@@ -1,6 +1,7 @@
 use crate::models::{ChurchInfo, MonthlyEvent, PrayerRequest, WeeklyScheduleItem};
-use std::fs;
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
+use tokio::fs;
+use tokio::sync::RwLock;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -11,30 +12,45 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub fn new(data_dir: &str) -> Self {
-        fs::create_dir_all(data_dir).unwrap_or_default();
+    pub async fn new(data_dir: &str) -> Result<Self, String> {
+        fs::create_dir_all(data_dir).await.map_err(|e| {
+            format!(
+                "No se pudo crear el directorio de datos '{}': {}",
+                data_dir, e
+            )
+        })?;
 
-        let church_info = Self::load_or_default_info(data_dir);
-        let events = Self::load_or_default_events(data_dir);
-        let prayers = Self::load_prayers(data_dir);
+        let church_info = Self::load_or_default_info(data_dir).await;
+        let events = Self::load_or_default_events(data_dir).await;
+        let prayers = Self::load_prayers(data_dir).await;
 
-        Self {
+        Ok(Self {
             church_info: Arc::new(RwLock::new(church_info)),
             events: Arc::new(RwLock::new(events)),
             prayers: Arc::new(RwLock::new(prayers)),
             data_dir: data_dir.to_string(),
-        }
+        })
     }
 
-    fn load_or_default_info(dir: &str) -> ChurchInfo {
+    async fn load_or_default_info(dir: &str) -> ChurchInfo {
         let path = format!("{}/church_info.json", dir);
-        if let Ok(content) = fs::read_to_string(&path) {
+        if let Ok(content) = fs::read_to_string(&path).await {
             if let Ok(info) = serde_json::from_str(&content) {
                 return info;
             }
         }
 
-        let default_info = ChurchInfo {
+        let default_info = Self::default_church_info();
+
+        if let Ok(serialized) = serde_json::to_string_pretty(&default_info) {
+            let _ = fs::write(&path, serialized).await;
+        }
+
+        default_info
+    }
+
+    fn default_church_info() -> ChurchInfo {
+        ChurchInfo {
             name: "Iglesia Cristiana Nueva Vida".to_string(),
             short_name: "ICNVB".to_string(),
             slogan: "Un lugar para creer, pertenecer y crecer en Cristo".to_string(),
@@ -104,25 +120,28 @@ impl AppState {
                     icon: "Moon".to_string(),
                 },
             ],
-        };
-
-        if let Ok(serialized) = serde_json::to_string_pretty(&default_info) {
-            let _ = fs::write(&path, serialized);
         }
-
-        default_info
     }
 
-    fn load_or_default_events(dir: &str) -> Vec<MonthlyEvent> {
+    async fn load_or_default_events(dir: &str) -> Vec<MonthlyEvent> {
         let path = format!("{}/schedule.json", dir);
-        if let Ok(content) = fs::read_to_string(&path) {
+        if let Ok(content) = fs::read_to_string(&path).await {
             if let Ok(events) = serde_json::from_str(&content) {
                 return events;
             }
         }
 
-        // Eventos de ejemplo con el calendario del mes corriente
-        let default_events = vec![
+        let default_events = Self::default_events();
+
+        if let Ok(serialized) = serde_json::to_string_pretty(&default_events) {
+            let _ = fs::write(&path, serialized).await;
+        }
+
+        default_events
+    }
+
+    fn default_events() -> Vec<MonthlyEvent> {
+        vec![
             MonthlyEvent {
                 id: "evt-nov-01".to_string(),
                 title: "Culto de Celebración y Santa Cena".to_string(),
@@ -244,18 +263,12 @@ impl AppState {
                 is_featured: true,
                 location: "Templo Central ICNVB - Bremen".to_string(),
             },
-        ];
-
-        if let Ok(serialized) = serde_json::to_string_pretty(&default_events) {
-            let _ = fs::write(&path, serialized);
-        }
-
-        default_events
+        ]
     }
 
-    fn load_prayers(dir: &str) -> Vec<PrayerRequest> {
+    async fn load_prayers(dir: &str) -> Vec<PrayerRequest> {
         let path = format!("{}/prayers.json", dir);
-        if let Ok(content) = fs::read_to_string(&path) {
+        if let Ok(content) = fs::read_to_string(&path).await {
             if let Ok(prayers) = serde_json::from_str(&content) {
                 return prayers;
             }
@@ -263,19 +276,25 @@ impl AppState {
         Vec::new()
     }
 
-    pub fn save_events(&self) -> Result<(), String> {
+    pub async fn save_events(&self) -> Result<(), String> {
         let path = format!("{}/schedule.json", self.data_dir);
-        let events = self.events.read().map_err(|e| e.to_string())?;
-        let serialized = serde_json::to_string_pretty(&*events).map_err(|e| e.to_string())?;
-        fs::write(&path, serialized).map_err(|e| e.to_string())?;
+        let events = self.events.read().await;
+        let serialized = serde_json::to_string_pretty(&*events)
+            .map_err(|e| format!("Error serializando eventos: {}", e))?;
+        fs::write(&path, serialized)
+            .await
+            .map_err(|e| format!("Error guardando eventos en disco: {}", e))?;
         Ok(())
     }
 
-    pub fn save_prayers(&self) -> Result<(), String> {
+    pub async fn save_prayers(&self) -> Result<(), String> {
         let path = format!("{}/prayers.json", self.data_dir);
-        let prayers = self.prayers.read().map_err(|e| e.to_string())?;
-        let serialized = serde_json::to_string_pretty(&*prayers).map_err(|e| e.to_string())?;
-        fs::write(&path, serialized).map_err(|e| e.to_string())?;
+        let prayers = self.prayers.read().await;
+        let serialized = serde_json::to_string_pretty(&*prayers)
+            .map_err(|e| format!("Error serializando peticiones: {}", e))?;
+        fs::write(&path, serialized)
+            .await
+            .map_err(|e| format!("Error guardando peticiones en disco: {}", e))?;
         Ok(())
     }
 }
