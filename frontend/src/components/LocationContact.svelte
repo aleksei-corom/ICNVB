@@ -92,13 +92,13 @@
             </a>
 
             <a
-              href="https://www.google.com/maps/search/?api=1&query=Bremen+Sincelejo+Sucre+Colombia"
+              href="https://maps.app.goo.gl/PJzUny9fd9qdZZVs6"
               target="_blank"
               rel="noopener noreferrer"
               class="inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-semibold text-church-800 bg-church-50 hover:bg-church-100 border border-church-200 transition-colors"
             >
               <Navigation class="w-4 h-4 text-church-600" />
-              <span>Ver en Google Maps</span>
+              <span>Ver ubicación exacta en Google Maps</span>
             </a>
           </div>
         </div>
@@ -133,12 +133,12 @@
             Mapa Geográfico • Sucre, Colombia
           </span>
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-church-100 text-church-800">
-            Bremen, Sincelejo
+            Referencia aproximada
           </span>
         </div>
 
         <div class="w-full h-80 sm:h-96 rounded-2xl overflow-hidden border border-slate-200 shadow-inner relative">
-          <!-- OpenStreetMap iframe centrado en Bremen / Sincelejo -->
+          <!-- OpenStreetMap iframe centrado en Bremen / Sincelejo (referencia aproximada) -->
           <iframe
             title="Mapa Bremen Sincelejo"
             width="100%"
@@ -155,7 +155,7 @@
         <div class="mt-4 p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
           <Navigation class="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
           <p>
-            <strong>Nota para visitas:</strong> Si viajas en vehículo particular o moto desde Sincelejo, la ruta hacia Bremen está señalizada. Puedes comunicarte con los pastores al llegar para guiarte directamente hasta el templo.
+            <strong>Nota para visitas:</strong> El mapa anterior es una referencia aproximada del corregimiento de Bremen. Para la <strong>ubicación exacta del templo</strong>, usa el botón "Ver ubicación exacta en Google Maps" o comunícate con los pastores al llegar para que te guíen directamente.
           </p>
         </div>
       </div>
