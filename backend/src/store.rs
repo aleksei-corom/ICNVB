@@ -152,6 +152,8 @@ impl AppState {
                 scripture: Some("1 Corintios 11:24-26".to_string()),
                 is_featured: true,
                 location: "Templo Central ICNVB - Bremen".to_string(),
+                predicador: None,
+                director_alabanza: None,
             },
             MonthlyEvent {
                 id: "evt-nov-04".to_string(),
@@ -163,6 +165,8 @@ impl AppState {
                 scripture: Some("2 Timoteo 3:16-17".to_string()),
                 is_featured: false,
                 location: "Templo Central ICNVB - Bremen".to_string(),
+                predicador: None,
+                director_alabanza: None,
             },
             MonthlyEvent {
                 id: "evt-nov-05-am".to_string(),
@@ -174,6 +178,8 @@ impl AppState {
                 scripture: Some("Esdras 8:23".to_string()),
                 is_featured: false,
                 location: "Templo Central ICNVB - Bremen".to_string(),
+                predicador: None,
+                director_alabanza: None,
             },
             MonthlyEvent {
                 id: "evt-nov-05-pm".to_string(),
@@ -185,6 +191,8 @@ impl AppState {
                 scripture: Some("Proverbios 31:25-30".to_string()),
                 is_featured: true,
                 location: "Templo Central ICNVB - Bremen".to_string(),
+                predicador: None,
+                director_alabanza: None,
             },
             MonthlyEvent {
                 id: "evt-nov-06".to_string(),
@@ -196,6 +204,8 @@ impl AppState {
                 scripture: Some("1 Timoteo 4:12".to_string()),
                 is_featured: true,
                 location: "Templo Central ICNVB - Bremen".to_string(),
+                predicador: None,
+                director_alabanza: None,
             },
             MonthlyEvent {
                 id: "evt-nov-08".to_string(),
@@ -207,6 +217,8 @@ impl AppState {
                 scripture: Some("Josué 24:15".to_string()),
                 is_featured: false,
                 location: "Templo Central ICNVB - Bremen".to_string(),
+                predicador: None,
+                director_alabanza: None,
             },
             MonthlyEvent {
                 id: "evt-nov-12-am".to_string(),
@@ -218,6 +230,8 @@ impl AppState {
                 scripture: Some("Santiago 5:14-15".to_string()),
                 is_featured: false,
                 location: "Templo Central ICNVB - Bremen".to_string(),
+                predicador: None,
+                director_alabanza: None,
             },
             MonthlyEvent {
                 id: "evt-nov-12-pm".to_string(),
@@ -229,6 +243,8 @@ impl AppState {
                 scripture: Some("Proverbios 14:1".to_string()),
                 is_featured: false,
                 location: "Templo Central ICNVB - Bremen".to_string(),
+                predicador: None,
+                director_alabanza: None,
             },
             MonthlyEvent {
                 id: "evt-nov-13".to_string(),
@@ -240,6 +256,8 @@ impl AppState {
                 scripture: Some("Salmos 119:9".to_string()),
                 is_featured: false,
                 location: "Templo Central ICNVB - Bremen".to_string(),
+                predicador: None,
+                director_alabanza: None,
             },
             MonthlyEvent {
                 id: "evt-nov-20".to_string(),
@@ -251,6 +269,8 @@ impl AppState {
                 scripture: Some("Lucas 6:12; Jeremías 33:3".to_string()),
                 is_featured: true,
                 location: "Templo Central ICNVB - Bremen".to_string(),
+                predicador: None,
+                director_alabanza: None,
             },
             MonthlyEvent {
                 id: "evt-nov-29".to_string(),
@@ -262,6 +282,8 @@ impl AppState {
                 scripture: Some("Salmos 100:1-5".to_string()),
                 is_featured: true,
                 location: "Templo Central ICNVB - Bremen".to_string(),
+                predicador: None,
+                director_alabanza: None,
             },
         ]
     }

@@ -74,7 +74,7 @@ export async function fetchEventsFromGoogleSheets(csvUrl: string): Promise<Month
   }
 
   // Cabeceras esperadas:
-  // fecha, hora, titulo, categoria, descripcion, cita_biblica, lugar, destacado
+  // fecha, hora, titulo, categoria, descripcion, cita_biblica, lugar, destacado, predicador, director_alabanza
   const headers = parseCsvLine(lines[0]).map(h => h.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
   
   const getCol = (cols: string[], name: string): string => {
@@ -99,6 +99,8 @@ export async function fetchEventsFromGoogleSheets(csvUrl: string): Promise<Month
     const lugar = getCol(cols, 'lugar') || cols[6] || 'Templo Central ICNVB - Bremen';
     const destacadoRaw = (getCol(cols, 'destacado') || cols[7] || '').toUpperCase();
     const isFeatured = destacadoRaw === 'SI' || destacadoRaw === 'SÍ' || destacadoRaw === 'TRUE' || destacadoRaw === '1';
+    const predicador = getCol(cols, 'predicador') || cols[8] || undefined;
+    const directorAlabanza = getCol(cols, 'director') || getCol(cols, 'alabanza') || cols[9] || undefined;
 
     events.push({
       id: `evt-gsheet-${i}-${date}`,
@@ -108,6 +110,8 @@ export async function fetchEventsFromGoogleSheets(csvUrl: string): Promise<Month
       category: categoria,
       description: descripcion,
       scripture: cita ? cita : undefined,
+      predicador: predicador ? predicador : undefined,
+      directorAlabanza: directorAlabanza ? directorAlabanza : undefined,
       is_featured: isFeatured,
       location: lugar,
     });

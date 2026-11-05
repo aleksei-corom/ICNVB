@@ -34,6 +34,8 @@ pub struct MonthlyEvent {
     pub category: String, // "Culto General", "Jóvenes", "Damas", "Ayuno", "Vigilia", "Especial"
     pub description: String,
     pub scripture: Option<String>,
+    pub predicador: Option<String>, // Nombre del predicador / expositor del culto
+    pub director_alabanza: Option<String>, // Nombre del director de alabanza / ministerio de música
     pub is_featured: bool,
     pub location: String,
 }

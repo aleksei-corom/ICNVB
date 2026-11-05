@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Calendar, Filter, Share2, Sparkles, MapPin, Clock, BookOpen, RefreshCw, FileSpreadsheet, ExternalLink, Info } from 'lucide-svelte';
+  import { Calendar, Filter, Share2, Sparkles, MapPin, Clock, BookOpen, User, Music, RefreshCw, FileSpreadsheet, ExternalLink, Info } from 'lucide-svelte';
   import type { MonthlyEvent } from '../types';
   import { APP_CONFIG } from '../config';
   import { fetchEventsFromGoogleSheets } from '../services/sheets';
@@ -257,9 +257,25 @@ ${event.description}
                 {event.description}
               </p>
               {#if event.scripture}
-                <div class="inline-flex items-center gap-1.5 text-xs text-gold-800 bg-gold-50 border border-gold-200/80 px-2.5 py-1 rounded-lg italic font-serif">
+                <div class="inline-flex items-center gap-1.5 text-xs text-gold-800 bg-gold-50 border border-gold-200/80 px-2.5 py-1 rounded-lg italic font-serif mb-2">
                   <BookOpen class="w-3.5 h-3.5 text-gold-600" />
                   <span>{event.scripture}</span>
+                </div>
+              {/if}
+              {#if event.predicador || event.directorAlabanza}
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 text-xs sm:text-sm">
+                  {#if event.predicador}
+                    <div class="inline-flex items-center gap-1 bg-church-50 text-church-700 px-2.5 py-1 rounded-lg border border-church-100">
+                      <User class="w-3 h-3" />
+                      <span class="font-semibold">Predicador: {event.predicador}</span>
+                    </div>
+                  {/if}
+                  {#if event.directorAlabanza}
+                    <div class="inline-flex items-center gap-1 bg-gold-50 text-gold-800 px-2.5 py-1 rounded-lg border border-gold-100">
+                      <Music class="w-3 h-3" />
+                      <span class="font-semibold">Alabanza: {event.directorAlabanza}</span>
+                    </div>
+                  {/if}
                 </div>
               {/if}
             </div>

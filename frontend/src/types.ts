@@ -15,6 +15,8 @@ export interface MonthlyEvent {
   category: string;
   description: string;
   scripture?: string;
+  predicador?: string; // Nombre del predicador / expositor del culto
+  directorAlabanza?: string; // Nombre del director de alabanza / ministerio de música
   is_featured: boolean;
   location: string;
 }
