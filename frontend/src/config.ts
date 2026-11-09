@@ -68,5 +68,35 @@ export const APP_CONFIG = {
   telLink(phone: string): string {
     return `tel:${phone.replace(/[^0-9+]/g, "")}`;
   },
+
+  /** URL base de la API del backend */
+  apiBaseUrl: '', // En modo desarrollo Vite proxyea /api al backend
+
+  /** Credenciales de administrador (configurar en producción) */
+  admin: {
+    defaultUsername: 'admin',
+    defaultPassword: 'icnvb2026',
+  },
+
+  /** Categorías disponibles para la galería */
+  galleryCategories: [
+    'Culto',
+    'Evento Especial',
+    'Grupos Familiares',
+    'Niños',
+    'Jóvenes',
+    'Otro',
+  ],
+
+  /** Categorías de eventos */
+  eventCategories: [
+    'Culto General',
+    'Jóvenes',
+    'Damas',
+    'Ayuno',
+    'Vigilia',
+    'Enseñanza',
+    'Grupos Familiares',
+  ],
 };
 

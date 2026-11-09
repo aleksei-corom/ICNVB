@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Menu, X, Phone, Calendar, HeartHandshake, MapPin } from 'lucide-svelte';
+  import { Menu, X, Phone, Calendar, HeartHandshake, MapPin, Image, Shield } from 'lucide-svelte';
   import { APP_CONFIG } from '../config';
 
   export let churchName = "Iglesia Cristiana Nueva Vida";
@@ -95,6 +95,10 @@
           Peticiones
         </a>
         <a href="#ubicacion" class="px-3 py-2 rounded-lg hover:text-church-700 hover:bg-slate-100/70 transition-colors">Ubicación</a>
+        <a href="/galeria" class="px-3 py-2 rounded-lg hover:text-church-700 hover:bg-slate-100/70 transition-colors flex items-center gap-1">
+          <Image class="w-4 h-4" />
+          Galería
+        </a>
       </nav>
 
       <!-- Botón de Acción Principal -->
@@ -188,6 +192,23 @@
 
       <div class="pt-3 border-t border-slate-100 flex flex-col gap-2">
         <a 
+          href="/galeria" 
+          on:click={closeMenu}
+          class="block px-3 py-2.5 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-100 flex items-center gap-2"
+        >
+          <Image class="w-4 h-4" />
+          Galería de la Iglesia
+        </a>
+        <a 
+          href="/admin/login" 
+          on:click={closeMenu}
+          class="block px-3 py-2.5 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-100 flex items-center gap-2"
+        >
+          <Shield class="w-4 h-4" />
+          Administración
+        </a>
+        <div class="pt-3 border-t border-slate-100 flex flex-col gap-2">
+        <a 
           href={waBenjaminVisit} 
           target="_blank"
           rel="noopener noreferrer"
@@ -205,6 +226,7 @@
         </a>
       </div>
     </div>
+  </div>
   {/if}
 </header>
 
