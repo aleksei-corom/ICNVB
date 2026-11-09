@@ -1,7 +1,3 @@
 [build]
-builder = "docker"
-
-[[services]]
-name = "icnvb-backend"
+builder = "DOCKERFILE"
 dockerfilePath = "backend/Dockerfile"
-contextPath = "backend"
