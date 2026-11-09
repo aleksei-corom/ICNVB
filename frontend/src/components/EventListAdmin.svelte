@@ -2,9 +2,10 @@
   import { onMount } from 'svelte';
   import { getAdminEvents, deleteEvent } from '../services/admin';
   import type { MonthlyEvent } from '../types';
-  import { Trash2, Edit3, Calendar, MapPin, User, Music } from 'lucide-svelte';
+  import { Trash2, Edit3, Calendar, MapPin, User, Music, Eye } from 'lucide-svelte';
 
   export let onEdit: (event: MonthlyEvent) => void = () => {};
+  export let onPreview: (event: MonthlyEvent) => void = () => {};
 
   let events: MonthlyEvent[] = [];
   let loading = true;
@@ -61,6 +62,13 @@
             {event.category}
           </span>
           <div class="flex items-center gap-2">
+            <button
+              on:click={() => onPreview(event)}
+              class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+              title="Ver detalles"
+            >
+              <Eye class="w-4 h-4" />
+            </button>
             <button
               on:click={() => onEdit(event)}
               class="p-2 text-slate-400 hover:text-church-700 hover:bg-slate-50 rounded-lg transition-colors"

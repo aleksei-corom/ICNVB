@@ -6,6 +6,7 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 use tokio::fs;
 use uuid::Uuid;
+use bcrypt::{hash, verify, DEFAULT_COST};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -442,10 +443,12 @@ impl AppState {
             }
         }
 
-        // Usuario por defecto: admin / icnvb2026
+        // Usuario por defecto: admin / icnvb2026 (con hash bcrypt)
+        let password_hash = hash("icnvb2026", DEFAULT_COST).unwrap_or_else(|_| "icnvb2026".to_string());
+
         let default_user = AdminUser {
             username: "admin".to_string(),
-            password_hash: "icnvb2026".to_string(), // En producción usar bcrypt
+            password_hash,
         };
 
         if let Ok(serialized) = serde_json::to_string_pretty(&default_user) {
@@ -609,7 +612,79 @@ impl AppState {
 
     pub async fn verify_admin(&self, username: &str, password: &str) -> bool {
         let user = self.admin_user.read().await;
-        user.username == username && user.password_hash == password
+        if user.username != username {
+            return false;
+        }
+        verify(password, &user.password_hash).unwrap_or(false)
+    }
+
+    pub async fn change_password(&self, username: &str, current_password: &str, new_password: &str) -> Result<(), String> {
+        let mut user = self.admin_user.write().await;
+
+        if user.username != username {
+            return Err("Usuario no encontrado".to_string());
+        }
+
+        if !verify(current_password, &user.password_hash).unwrap_or(false) {
+            return Err("Contraseña actual incorrecta".to_string());
+        }
+
+        let new_hash = hash(new_password, DEFAULT_COST)
+            .map_err(|e| format!("Error hashing contraseña: {}", e))?;
+        user.password_hash = new_hash;
+
+        drop(user);
+        self.save_admin().await
+    }
+
+    pub async fn save_admin(&self) -> Result<(), String> {
+        let path = format!("{}/admin.json", self.data_dir);
+        let user = self.admin_user.read().await;
+        let serialized = serde_json::to_string_pretty(&*user)
+            .map_err(|e| format!("Error serializando admin: {}", e))?;
+        fs::write(&path, serialized)
+            .await
+            .map_err(|e| format!("Error guardando admin: {}", e))?;
+        Ok(())
+    }
+
+    // --- Exportación de datos ---
+
+    pub async fn export_events_json(&self) -> Result<String, String> {
+        let events = self.events.read().await;
+        let serialized = serde_json::to_string_pretty(&*events)
+            .map_err(|e| format!("Error serializando eventos: {}", e))?;
+        Ok(serialized)
+    }
+
+    pub async fn export_gallery_json(&self) -> Result<String, String> {
+        let items = self.gallery.read().await;
+        let serialized = serde_json::to_string_pretty(&*items)
+            .map_err(|e| format!("Error serializando galería: {}", e))?;
+        Ok(serialized)
+    }
+
+    pub async fn export_events_csv(&self) -> Result<String, String> {
+        let events = self.events.read().await;
+        let mut csv = String::from("id,title,date,time,category,description,scripture,predicador,director_alabanza,is_featured,location\n");
+        for e in events.iter() {
+            let scripture = e.scripture.as_deref().unwrap_or("");
+            let predicador = e.predicador.as_deref().unwrap_or("");
+            let director = e.director_alabanza.as_deref().unwrap_or("");
+            csv.push_str(&format!(
+                "\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",{},\"{}\"\n",
+                e.id, e.title, e.date, e.time, e.category, e.description,
+                scripture, predicador, director, e.is_featured, e.location
+            ));
+        }
+        Ok(csv)
+    }
+
+    pub async fn export_prayers_json(&self) -> Result<String, String> {
+        let prayers = self.prayers.read().await;
+        let serialized = serde_json::to_string_pretty(&*prayers)
+            .map_err(|e| format!("Error serializando peticiones: {}", e))?;
+        Ok(serialized)
     }
 
     pub async fn save_prayers_wrapper(&self) -> Result<(), String> {

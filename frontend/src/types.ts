@@ -95,3 +95,16 @@ export interface UpdateEventInput {
   location?: string;
 }
 
+export interface ChangePasswordRequest {
+  current_password: string;
+  new_password: string;
+}
+
+export interface ExportResponse {
+  success: boolean;
+  message: string;
+  filename: string;
+  content_type: string;
+  data: string;
+}
+

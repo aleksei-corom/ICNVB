@@ -2,30 +2,32 @@ use axum::{
     extract::{Query, State, Path},
     http::{StatusCode, HeaderMap, header},
     response::Json,
-    routing::{get, post, put, delete},
 };
-use chrono::Utc;
+use chrono::{Utc, Duration};
 use serde::Deserialize;
 use serde_json::json;
 use tokio::fs;
 use uuid::Uuid;
+use jsonwebtoken::{encode, decode, Header, EncodingKey, DecodingKey, Validation};
 
 use crate::models::{
     ApiResponse, ApiResponseEmpty, ChurchInfo, CreateEventInput, CreateGalleryItemInput,
-    CreatePrayerInput, GalleryItem, GalleryListResponse, LoginRequest, LoginResponse,
-    MonthlyEvent, PrayerRequest, UpdateEventInput,
+    CreatePrayerInput, Claims, ChangePasswordRequest, ExportResponse, GalleryItem,
+    GalleryListResponse, LoginRequest, LoginResponse, MonthlyEvent, PrayerRequest,
+    UpdateEventInput,
 };
 use crate::store::AppState;
 
-// --- Middleware de autenticación simple ---
+const JWT_SECRET: &[u8] = b"icnvb_secret_key_2026"; // En producción usar variable de entorno
+
+// --- Middleware de autenticación JWT ---
 
 pub async fn auth_middleware(
     headers: HeaderMap,
-    State(state): State<AppState>,
+    State(_state): State<AppState>,
     request: axum::extract::Request,
     next: axum::middleware::Next,
 ) -> Result<axum::response::Response, StatusCode> {
-    let _ = state; // state disponible si se necesita en el futuro
     let path = request.uri().path().to_string();
 
     // Permitir login y health sin auth
@@ -33,11 +35,18 @@ pub async fn auth_middleware(
         return Ok(next.run(request).await);
     }
 
-    // Verificar token simple
+    // Verificar token JWT en header Authorization: Bearer <token>
     if let Some(auth_header) = headers.get(header::AUTHORIZATION) {
         if let Ok(auth_str) = auth_header.to_str() {
-            if auth_str == "Bearer admin-authenticated" {
-                return Ok(next.run(request).await);
+            if let Some(token) = auth_str.strip_prefix("Bearer ") {
+                match decode::<Claims>(
+                    token,
+                    &DecodingKey::from_secret(JWT_SECRET),
+                    &Validation::default(),
+                ) {
+                    Ok(_) => return Ok(next.run(request).await),
+                    Err(_) => return Err(StatusCode::UNAUTHORIZED),
+                }
             }
         }
     }
@@ -155,8 +164,26 @@ pub async fn admin_login(
     Json(login): Json<LoginRequest>,
 ) -> Result<Json<LoginResponse>, StatusCode> {
     if state.verify_admin(&login.username, &login.password).await {
+        // Generar token JWT con expiración de 24 horas
+        let expiration = Utc::now()
+            .checked_add_signed(Duration::hours(24))
+            .expect("timestamp válido")
+            .timestamp() as usize;
+
+        let claims = Claims {
+            sub: login.username.clone(),
+            exp: expiration,
+        };
+
+        let token = encode(
+            &Header::default(),
+            &claims,
+            &EncodingKey::from_secret(JWT_SECRET),
+        )
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+
         Ok(Json(LoginResponse {
-            token: "admin-authenticated".to_string(),
+            token,
             user: crate::models::AdminUser {
                 username: login.username,
                 password_hash: "".to_string(),
@@ -230,6 +257,83 @@ pub async fn admin_delete_event(
     }
 }
 
+// POST /api/admin/change-password
+pub async fn admin_change_password(
+    State(state): State<AppState>,
+    Json(req): Json<ChangePasswordRequest>,
+) -> Result<Json<ApiResponseEmpty>, StatusCode> {
+    match state.change_password("admin", &req.current_password, &req.new_password).await {
+        Ok(()) => Ok(Json(ApiResponseEmpty {
+            success: true,
+            message: "Contraseña cambiada exitosamente".to_string(),
+        })),
+        Err(e) => {
+            let status = if e.contains("incorrecta") || e.contains("no encontrado") {
+                StatusCode::BAD_REQUEST
+            } else {
+                StatusCode::INTERNAL_SERVER_ERROR
+            };
+            Err(status)
+        }
+    }
+}
+
+// GET /api/admin/export/events (JSON)
+pub async fn admin_export_events_json(State(state): State<AppState>) -> Result<Json<ExportResponse>, StatusCode> {
+    match state.export_events_json().await {
+        Ok(data) => Ok(Json(ExportResponse {
+            success: true,
+            message: "Eventos exportados exitosamente".to_string(),
+            filename: format!("eventos_{}.json", Utc::now().format("%Y%m%d")),
+            content_type: "application/json".to_string(),
+            data,
+        })),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
+}
+
+// GET /api/admin/export/events/csv
+pub async fn admin_export_events_csv(State(state): State<AppState>) -> Result<Json<ExportResponse>, StatusCode> {
+    match state.export_events_csv().await {
+        Ok(data) => Ok(Json(ExportResponse {
+            success: true,
+            message: "Eventos exportados a CSV exitosamente".to_string(),
+            filename: format!("eventos_{}.csv", Utc::now().format("%Y%m%d")),
+            content_type: "text/csv".to_string(),
+            data,
+        })),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
+}
+
+// GET /api/admin/export/prayers
+pub async fn admin_export_prayers_json(State(state): State<AppState>) -> Result<Json<ExportResponse>, StatusCode> {
+    match state.export_prayers_json().await {
+        Ok(data) => Ok(Json(ExportResponse {
+            success: true,
+            message: "Peticiones exportadas exitosamente".to_string(),
+            filename: format!("peticiones_oracion_{}.json", Utc::now().format("%Y%m%d")),
+            content_type: "application/json".to_string(),
+            data,
+        })),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
+}
+
+// GET /api/admin/export/gallery
+pub async fn admin_export_gallery_json(State(state): State<AppState>) -> Result<Json<ExportResponse>, StatusCode> {
+    match state.export_gallery_json().await {
+        Ok(data) => Ok(Json(ExportResponse {
+            success: true,
+            message: "Galería exportada exitosamente".to_string(),
+            filename: format!("galeria_{}.json", Utc::now().format("%Y%m%d")),
+            content_type: "application/json".to_string(),
+            data,
+        })),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
+}
+
 // GET /api/admin/gallery
 pub async fn admin_get_gallery(State(state): State<AppState>) -> Json<GalleryListResponse> {
     let items = state.get_gallery_items().await;
@@ -240,11 +344,15 @@ pub async fn admin_get_gallery(State(state): State<AppState>) -> Json<GalleryLis
     })
 }
 
-// POST /api/admin/gallery - subir archivo
+// POST /api/admin/gallery - subir archivo con validación
 pub async fn admin_upload_gallery(
     State(state): State<AppState>,
     mut multipart: axum::extract::Multipart,
 ) -> Result<(StatusCode, Json<ApiResponse<GalleryItem>>), StatusCode> {
+    const MAX_FILE_SIZE: u64 = 10 * 1024 * 1024; // 10 MB
+    const ALLOWED_IMAGE_TYPES: &[&str] = &["image/jpeg", "image/png", "image/webp", "image/gif"];
+    const ALLOWED_VIDEO_TYPES: &[&str] = &["video/mp4", "video/webm", "video/quicktime"];
+
     let mut title: Option<String> = None;
     let mut description: Option<String> = None;
     let mut file_type: Option<String> = None;
@@ -261,7 +369,11 @@ pub async fn admin_upload_gallery(
             "file_name" => file_name = Some(field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?),
             "category" => category = Some(field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?),
             "file" => {
-                file_data = Some(field.bytes().await.map_err(|_| StatusCode::BAD_REQUEST)?.to_vec());
+                let bytes = field.bytes().await.map_err(|_| StatusCode::BAD_REQUEST)?;
+                if bytes.len() as u64 > MAX_FILE_SIZE {
+                    return Err(StatusCode::PAYLOAD_TOO_LARGE);
+                }
+                file_data = Some(bytes.to_vec());
             }
             _ => {}
         }
@@ -273,13 +385,17 @@ pub async fn admin_upload_gallery(
     let category = category.ok_or(StatusCode::BAD_REQUEST)?;
     let file_data = file_data.ok_or(StatusCode::BAD_REQUEST)?;
 
-    // Obtener data_dir mediante un método público o hacer el campo accesible
-    let data_dir = state.data_dir.clone();
+    // Validar tipo de archivo
+    let is_valid_image = ALLOWED_IMAGE_TYPES.contains(&file_type.as_str());
+    let is_valid_video = ALLOWED_VIDEO_TYPES.contains(&file_type.as_str());
+    if !is_valid_image && !is_valid_video {
+        return Err(StatusCode::UNSUPPORTED_MEDIA_TYPE);
+    }
 
     // Guardar archivo físico
     let file_id = Uuid::new_v4().simple();
-    let safe_file_name = file_name.replace('/', "_").replace('\\', "_");
-    let file_path_on_disk = format!("{}/uploads/{}_{}", data_dir, file_id, safe_file_name);
+    let safe_file_name = file_name.replace(['/', '\\'], "_");
+    let file_path_on_disk = format!("{}/uploads/{}_{}", state.data_dir, file_id, safe_file_name);
     let file_url_for_web = format!("/uploads/{}_{}", file_id, safe_file_name);
 
     fs::write(&file_path_on_disk, &file_data)

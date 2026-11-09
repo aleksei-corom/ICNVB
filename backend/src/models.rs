@@ -150,3 +150,30 @@ pub struct GalleryListResponse {
     pub message: String,
     pub data: Vec<GalleryItem>,
 }
+
+// --- JWT Claims ---
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    pub sub: String, // username
+    pub exp: usize,  // expiración
+}
+
+// --- Cambio de contraseña ---
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ChangePasswordRequest {
+    pub current_password: String,
+    pub new_password: String,
+}
+
+// --- Exportación ---
+
+#[derive(Debug, Serialize)]
+pub struct ExportResponse {
+    pub success: bool,
+    pub message: String,
+    pub filename: String,
+    pub content_type: String,
+    pub data: String,
+}

@@ -14,9 +14,11 @@ mod models;
 mod store;
 
 use handlers::{
-    admin_create_event, admin_delete_event, admin_delete_gallery_item, admin_get_events,
-    admin_get_gallery, admin_login, admin_update_event, admin_upload_gallery, auth_middleware,
-    create_prayer_request, get_church_info, get_prayer_requests, get_schedule, health_check,
+    admin_change_password, admin_create_event, admin_delete_event, admin_delete_gallery_item,
+    admin_export_events_csv, admin_export_events_json, admin_export_gallery_json,
+    admin_export_prayers_json, admin_get_events, admin_get_gallery, admin_login,
+    admin_update_event, admin_upload_gallery, auth_middleware, create_prayer_request,
+    get_church_info, get_prayer_requests, get_schedule, health_check,
 };
 use store::AppState;
 
@@ -66,10 +68,15 @@ async fn main() {
     // Rutas de administración (con middleware de auth)
     let admin_routes = Router::new()
         .route("/login", post(admin_login))
+        .route("/change-password", post(admin_change_password))
         .route("/events", get(admin_get_events).post(admin_create_event))
         .route("/events/:id", put(admin_update_event).delete(admin_delete_event))
         .route("/gallery", get(admin_get_gallery).post(admin_upload_gallery))
         .route("/gallery/:id", delete(admin_delete_gallery_item))
+        .route("/export/events", get(admin_export_events_json))
+        .route("/export/events/csv", get(admin_export_events_csv))
+        .route("/export/prayers", get(admin_export_prayers_json))
+        .route("/export/gallery", get(admin_export_gallery_json))
         .layer(axum::middleware::from_fn_with_state(state.clone(), auth_middleware))
         .layer(cors);
 
