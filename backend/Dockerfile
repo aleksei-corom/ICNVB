@@ -12,14 +12,14 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar solo los archivos de dependencias primero (para cache de Docker)
-COPY Cargo.toml Cargo.lock ./
+COPY backend/Cargo.toml backend/Cargo.lock ./
 
 # Crear un main.rs vacío para pre-compilar dependencias (cache de capas)
 RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN cargo build --release
 
 # Copiar el código fuente real
-COPY . .
+COPY backend/ ./
 
 # Forzar recompilación con el código real
 RUN touch src/main.rs && cargo build --release
