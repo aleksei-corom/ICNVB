@@ -1,4 +1,4 @@
-FROM rust:1.85-slim AS builder
+FROM rust:1-slim-bookworm AS builder
 
 WORKDIR /app
 
@@ -8,14 +8,16 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-COPY backend/Cargo.toml backend/Cargo.lock ./
+# Copiar archivos fuente del backend (soporta ejecución desde la raíz o desde backend/)
+COPY Cargo.tom[l] backend/Cargo.tom[l] ./
+COPY sr[c] backend/sr[c] ./src/
 
-RUN mkdir src && echo "fn main() {}" > src/main.rs
+# Compilar release directamente (Cargo genera un lockfile limpio compatible con Linux)
 RUN cargo build --release
 
-COPY backend/ ./
-RUN touch src/main.rs && cargo build --release
-
+# ============================================================================
+# Etapa 2: Imagen final de producción limpia y ligera
+# ============================================================================
 FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y \
@@ -25,13 +27,13 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data /app/uploads
 
 COPY --from=builder /app/target/release/icnvb-backend .
 
 ENV PORT=3000
 ENV DATA_DIR=/app/data
-ENV ALLOWED_ORIGINS="https://www.icnvb.vercel.app,http://localhost:5173"
+ENV ALLOWED_ORIGINS="https://www.icnvb.vercel.app,https://icnvb.vercel.app,http://localhost:5173"
 
 EXPOSE 3000
 
