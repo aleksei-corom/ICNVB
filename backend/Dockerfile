@@ -8,12 +8,12 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-COPY Cargo.toml Cargo.lock ./
+COPY backend/Cargo.toml backend/Cargo.lock ./
 
 RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN cargo build --release
 
-COPY . .
+COPY backend/ ./
 RUN touch src/main.rs && cargo build --release
 
 FROM debian:bookworm-slim
