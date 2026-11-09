@@ -1,0 +1,13 @@
+[deploy]
+startCommand = "cargo run --release"
+healthcheckPath = "/health"
+healthcheckTimeout = 120
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+[build]
+builder = "nixpacks"
+
+[[services]]
+name = "icnvb-backend"
+dockerfile = "backend/Dockerfile"
