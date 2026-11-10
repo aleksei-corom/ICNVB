@@ -39,7 +39,10 @@
       }
 
       // 2. Intentar cargar desde el backend en Rust (/api/schedule)
-      const res = await fetch(`/api/schedule?month=${selectedMonth}`);
+      const scheduleUrl = APP_CONFIG.apiBaseUrl 
+        ? `${APP_CONFIG.apiBaseUrl}/api/schedule?month=${selectedMonth}` 
+        : `/api/schedule?month=${selectedMonth}`;
+      const res = await fetch(scheduleUrl);
       if (res.ok) {
         const json = await res.json();
         if (json.success && json.data && json.data.length > 0) {

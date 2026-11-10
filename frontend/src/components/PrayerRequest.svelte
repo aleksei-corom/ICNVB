@@ -33,7 +33,8 @@
     isSubmitting = true;
 
     try {
-      const res = await fetch('/api/prayer-request', {
+      const endpoint = APP_CONFIG.apiBaseUrl ? `${APP_CONFIG.apiBaseUrl}/api/prayer-request` : '/api/prayer-request';
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

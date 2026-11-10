@@ -38,3 +38,4 @@ ENV ALLOWED_ORIGINS="https://www.icnvb.vercel.app,https://icnvb.vercel.app,http:
 EXPOSE 3000
 
 CMD ["./icnvb-backend"]
+

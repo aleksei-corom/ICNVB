@@ -69,8 +69,8 @@ export const APP_CONFIG = {
     return `tel:${phone.replace(/[^0-9+]/g, "")}`;
   },
 
-  /** URL base de la API del backend (configurar en Vercel como VITE_API_URL) */
-  apiBaseUrl: import.meta.env.VITE_API_URL || '', // En modo desarrollo Vite proxyea /api al backend
+  /** URL base de la API del backend (configurada con Railway / variable VITE_API_URL en Vercel) */
+  apiBaseUrl: import.meta.env.VITE_API_URL || 'https://icnvb-production.up.railway.app',
 
   /** Credenciales de administrador (configurar en producción) */
   admin: {
