@@ -31,7 +31,7 @@ pub async fn auth_middleware(
     let path = request.uri().path().to_string();
 
     // Permitir login y health sin auth
-    if path == "/api/admin/login" || path == "/api/health" {
+    if path == "/api/admin/login" || path == "/api/login" || path == "/api/health" || path.ends_with("/login") {
         return Ok(next.run(request).await);
     }
 

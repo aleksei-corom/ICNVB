@@ -78,11 +78,12 @@ async fn main() {
         .route("/export/prayers", get(admin_export_prayers_json))
         .route("/export/gallery", get(admin_export_gallery_json))
         .layer(axum::middleware::from_fn_with_state(state.clone(), auth_middleware))
-        .layer(cors);
+        .layer(cors.clone());
 
-    // Combinar API y admin bajo /api
+    // Combinar API y admin bajo /api (soporta tanto /api/admin/... como /api/...)
     let combined_api = Router::new()
         .merge(api_routes)
+        .nest("/admin", admin_routes.clone())
         .merge(admin_routes)
         .with_state(state.clone());
 

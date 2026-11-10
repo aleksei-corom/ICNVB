@@ -612,10 +612,19 @@ impl AppState {
 
     pub async fn verify_admin(&self, username: &str, password: &str) -> bool {
         let user = self.admin_user.read().await;
-        if user.username != username {
+        if user.username.trim() != username.trim() {
             return false;
         }
-        verify(password, &user.password_hash).unwrap_or(false)
+        let pass_trim = password.trim();
+        // 1. Verificación con hash bcrypt
+        if verify(pass_trim, &user.password_hash).unwrap_or(false) {
+            return true;
+        }
+        // 2. Fallback texto plano (migración o valor inicial icnvb2026)
+        if user.password_hash.trim() == pass_trim {
+            return true;
+        }
+        false
     }
 
     pub async fn change_password(&self, username: &str, current_password: &str, new_password: &str) -> Result<(), String> {
